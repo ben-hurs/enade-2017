@@ -57,3 +57,34 @@ df1_ti = df1_ti %>% mutate(hestudos = case_when(QE_I23 =="A" ~ "Nenhuma, apenas 
 
 #removendo as variáveis 
 df1_ti = subset(df1_ti, select = -c(QE_I01, CO_REGIAO_CURSO, TP_SEXO, QE_I23))
+
+# ANALISE DESCRITIVA DAS VARIAVEIS
+s=summary(df1_ti)
+d=describe(df1_ti)
+
+# frequencias
+t = table(df1_ti$estado_civil)
+p = prop.table(t)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

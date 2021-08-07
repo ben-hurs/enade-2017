@@ -1,6 +1,6 @@
-vetor_pacotes=c("readr","ggplot2","plotly","e1071",
-                "dplyr","Hmisc","esquisse","gridExtra")
-install.packages(vetor_pacotes)
+#vetor_pacotes=c("readr","ggplot2","plotly","e1071",
+#                "dplyr","Hmisc","esquisse","gridExtra")
+#install.packages(vetor_pacotes)
 library(readr)
 library(ggplot2)
 library(plotly)
@@ -66,10 +66,36 @@ d=describe(df1_ti)
 t = table(df1_ti$estado_civil)
 p = prop.table(t)
 
+# resumo estado civil
+describe(df1_ti$estado_civil)
+unique(df1_ti$estado_civil)
 
+# total de cada esdadl civil agrupado
+df1_ti %>% select(estado_civil) %>% 
+  group_by(estado_civil) %>% 
+  summarise(total = n())
 
+# média das notas agrupada por estado civil
+df1_ti %>% 
+  select(estado_civil, NT_OBJ_FG) %>% 
+  group_by(estado_civil) %>% 
+  summarise(media = mean(NT_OBJ_FG, na.rm=T))
+  
+# remover os NA's
+df_ti_na = df1_ti %>% na.omit()
+resumo_na = df_ti_na %>% 
+  select(everything()) %>% 
+  summarise_all(list(~sum(is.na(.))))
+View(resumo_na)
 
+# total de linhas do dataset original
+dim(df1_ti)[1]
 
+#total de linhas do dataset sem os na's
+dim(df_ti_na)[1]
+
+# total de linhas removidas
+linhas_removidas = dim(df1_ti)[1] - dim(df_ti_na)[1]
 
 
 

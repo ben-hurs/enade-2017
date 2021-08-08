@@ -98,6 +98,86 @@ dim(df_ti_na)[1]
 linhas_removidas = dim(df1_ti)[1] - dim(df_ti_na)[1]
 
 
+# ESTATISTICA DESCRITIVA DA VARIAVEL NOTA
+# tamanho do vetor de notas
+qtd_notas = length(df_ti_na$NT_OBJ_CE)
+
+# média das notas
+media=mean(df_ti_na$NT_OBJ_CE)
+
+# mediana das notas
+mediana = median(df_ti_na$NT_OBJ_CE)
+
+# Moda
+moda = df_ti_na      %>% select(NT_OBJ_CE) %>% 
+       table()     %>%
+       which.max() %>% 
+       names()     %>% 
+       as.numeric()
+
+# concatenando media, mediana e moda
+concatenados = data.frame("quantidade de notas" = qtd_notas,
+                          "Media" = media,
+                          "Mediana"=mediana,
+                          "Moda"=moda)
+
+
+
+# Temos que a média(42)>mediana(40)=moda(40), logo não podemos afirmar
+# que a distribuição é assimétrica, contudo apresentado uma leve simetria, que
+# só poderemos afirmar pelo calculo do coeficiente de assimetria de  pearson
+
+#Assimetria
+assimetria = skewness(df_ti_na$NT_OBJ_CE)
+
+#Coeficiente de assimetria de pearson=0.1863963 > 0, logo a distribuição terá assimetria
+#positiva e concetração a esquerda dos maiores valores.
+
+#Curtose
+curtose = kurtosis(df_ti_na$NT_OBJ_CE)
+#pelo R, temos que se 
+#k>0, leptocúrtica
+#k=0, Mesocúrtica
+#k<0, Platicúrtica
+# nossa curtose deu valor -0.2791433, logo dizendo que é platicúrtica
+
+#concatenar tudo junto
+concatenados = cbind(concatenados, assimetria, curtose)
+
+# Gráficos para conferir o que constatamos
+
+# histograma da nota dos alunos com a frequencia relativa das notas
+g_hist=ggplot(df_ti_na,aes(x= NT_OBJ_CE))+
+  geom_histogram(color="black",fill="lightblue", bins=50, aes(y=(..count..)/sum(..count..)))+
+  ggtitle("Histograma da nota dos alunos de TI")+
+  xlab("Nota")+
+  ylab("Frequencia relativa")
+g_hist
+  
+g_densidade=ggplot(df_ti_na,aes(x= NT_OBJ_CE)) +
+  geom_density(col=2,size=1, aes(y=(..count..)/sum(..count..)))+
+  ggtitle("Curva de densidade da nota dos alunos de TI")+
+  xlab("Nota")+
+  ylab("Frequência relativa")
+g_densidade
+
+g_hist_densidade = ggplot(df_ti_na,aes(x=NT_OBJ_CE)) + 
+  geom_histogram(color = "black",fill="lightblue",bins =50,aes(y=(..count..)/sum(..count..)))+
+  geom_density(col=2,size = 1, aes(y = 27 * (..count..)/sum(..count..))) +
+  ggtitle("Histograma e curva de densidade da nota dos alunos de análise de sistemas")+
+  xlab("nota") +
+  ylab("Frequência relativa")
+g_hist_densidade
+ggplotly(g_hist_densidade)  
+
+
+grid.arrange( g_hist,
+              g_densidade,
+              g_hist_densidade,
+              nrow=3,ncol=1)
+
+
+
 
 
 

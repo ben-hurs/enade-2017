@@ -176,21 +176,111 @@ grid.arrange( g_hist,
               g_hist_densidade,
               nrow=3,ncol=1)
 
+# CONTINUAÇÃO BLOCO DA ANÁLISE DESCRITIVA DAS VARIÁVEIS
+#Comparar as médias por sexo e estado civil
+df_ti_mod2 = df_ti_na %>% 
+  select(estado_civil,NT_GER,sexo) %>% 
+  group_by(sexo, estado_civil) %>% 
+  summarise(Quantidade=n(),
+            Media = mean(NT_GER,na.rm =T),
+            mediana = median(NT_GER,na.rm =T),
+            CV = sd(NT_GER,na.rm =T)/Media*100,
+            amaplitude_interquartil=IQR(NT_GER)) %>% 
+  arrange(desc(mediana)) #orderna os dados pela mediana em ordem decrescente
+
+# Tabela cruzada
+table(df_ti_na$estado_civil, df_ti_na$sexo)
+
+# tabela cruzada proporção
+prop.table(table(df_ti_na$estado_civil, df_ti_na$sexo))
+
+
+#assimetria e curtose
+require(e1071)
+
+df_casados=df_ti_na %>% 
+  select(estado_civil,NT_GER) %>% 
+  group_by(estado_civil) %>% 
+  #filter(estado_civil=="Casado(a)") %>% 
+  summarise(quantidade=n(),
+            media=mean(NT_GER),
+            mediana=median(NT_GER),
+            cv = sd(NT_GER)/media*100,
+            amplitude_interquartil=IQR(NT_GER),
+            assimetria = skewness(NT_GER),
+            curtose=kurtosis(NT_GER)) %>% 
+  arrange(desc((cv)))
+
+
+# histograma
+dados = df_ti_na
+histograma1 = ggplot(dados, aes(x=NT_GER, fill=estado_civil))+
+  geom_histogram()+
+  ggtitle("Gráfico histograma da nota por estado civil")+
+  xlab("Notas")+
+  ylab("Frequencia simples")+
+  facet_grid(~estado_civil)
+ggplotly(histograma1)
+
+#boxplot
+boxplot1= ggplot(dados, aes(x=estado_civil,y=NT_GER,fill=estado_civil))+
+  geom_boxplot()+
+  ggtitle("Gráfico de Box-plot da Nota por estado civil e sexo")+
+  xlab("Estado civil")+
+  ylab("Notas")+
+  facet_grid(~sexo)
+ggplotly(boxplot1)
+
+#---
+#comparar as médoas por sexo e região
+df_ti_mod3 = df_ti_na %>% 
+  select(estado_civil, NT_GER,regiao,hestudos,sexo) %>% 
+  group_by(sexo,regiao) %>% 
+  summarise(quantidade=n(),
+            media=mean(NT_GER),
+            mediana=median(NT_GER),
+            cv=sd(NT_GER)/media*100,
+            amplitude_interquartil=IQR(NT_GER),
+            assimetria=skewness(NT_GER),
+            curtose = kurtosis(NT_GER)) %>% 
+  arrange(desc(media))
+
+# Tabela cruzada
+table(df_ti_na$regiao,df_ti_na$sexo)
+
+# Tabela cruzada proporção
+prop.table(table(df_ti_na$regiao,df_ti_na$sexo))
+
+# histograma
+dados = df_ti_na
+histograma2 = ggplot(dados, aes(x=NT_GER, fill=regiao))+
+  geom_histogram()+
+  ggtitle("Gráfico histograma da nota por regiao")+
+  xlab("Notas")+
+  ylab("Frequencia simples")+
+  facet_grid(~regiao)
+ggplotly(histograma2)
+
+#boxplot
+boxplot2= ggplot(dados, aes(x=regiao,y=NT_GER,fill=regiao))+
+  geom_boxplot()+
+  ggtitle("Gráfico de Box-plot da Nota por região e sexo")+
+  ylab("Notas")+
+  facet_grid(~sexo)
+ggplotly(boxplot2)
+
+grid.arrange(histograma1,
+             boxplot1,
+             histograma2,
+             boxplot2,
+             nrow=2,ncol=2)
 
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
+grid.arrange( grafico_histograma1,
+              grafico_boxplot1,
+              grafico_histograma2,
+              grafico_boxplot2,
+              nrow=2,ncol=2)
 
